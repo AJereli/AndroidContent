@@ -48,7 +48,7 @@
     <Reference Include="Mono.Android" />
     <Reference Include="mscorlib" />
     <Reference Include="MySql.Data.CF">
-      <HintPath>..\..\..\..\MySQL-Plugin-1.0\lib\android\MySql.Data.CF.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\..\Program Files\MySQL\Mysql Plugin\MySQL-Plugin-1.0\lib\android\MySql.Data.CF.dll</HintPath>
     </Reference>
     <Reference Include="Square.OkHttp, Version=2.4.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Square.OkHttp.2.4.0.0\lib\MonoAndroid\Square.OkHttp.dll</HintPath>
