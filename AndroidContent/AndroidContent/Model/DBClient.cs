@@ -90,7 +90,7 @@ namespace AllContent_Client
             {
                 mysqlConn.ConnectionString = mysqlCSB.ConnectionString;
 
-                mysqlConn.Open();
+                    mysqlConn.Open();
                 
                 if (query.Contains("INSERT INTO"))
                 {
