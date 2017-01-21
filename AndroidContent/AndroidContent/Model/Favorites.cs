@@ -10,15 +10,16 @@ namespace AllContent_Client
     {
         public string Source { get; private set; }
         public List<ContentUnit> content;
-        public int SelectLimit { get; set; }
-        private int CurrId;
-        List<string> selectResult = null;
+        public uint SelectLimit { get; set; }
+        private uint CurrId;
 
-        MySqlParameter sqlParamSource;
+        private List<string> selectResult = null;
 
-        public Favorit(string source)
+        private MySqlParameter sqlParamSource;
+
+        public Favorit(string source, uint selectLimit = 10)
         {
-            SelectLimit = 10;
+            SelectLimit = selectLimit;
             Source = source;
             content = new List<ContentUnit>();
             sqlParamSource = new MySqlParameter("sour", source);
@@ -34,6 +35,18 @@ namespace AllContent_Client
                 AddToCUList();
             }
         }
+
+        public void LoadNextNews(uint DownloadLimit)
+        {
+            using (DBClient client = new DBClient())
+            {
+                selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
+                           "WHERE source = @" + sqlParamSource.ParameterName + " AND id > " + CurrId.ToString() +
+                           " ORDER BY id DESC LIMIT " + DownloadLimit, sqlParamSource);
+                AddToCUList();
+            }
+        }
+
         public void Refresh()
         {
             using (DBClient client = new DBClient())
@@ -51,11 +64,13 @@ namespace AllContent_Client
                 }
             }
         }
+
+
         private void AddToCUList()
         {
-            if (selectResult != null)
+            if (selectResult != null && selectResult.Count != 0)
             {
-                CurrId = (int)Convert.ToUInt32(selectResult[0]);
+                CurrId = (uint)Convert.ToUInt32(selectResult[0]);
 
                 for (int i = 0; i < selectResult.Count; i += 8)
                 {
@@ -80,15 +95,19 @@ namespace AllContent_Client
     class FavoritList : IEnumerable<Favorit>
     {
         public event Action AddEvent = delegate { };
+
         public event Action DeleteEvent = delegate { };
+        public uint  DownloadLimit { get; set; }
+
 
         private List<Favorit> favorites;
-        BackgroundWorker refreshAllContent;
+        private BackgroundWorker refreshAllContent;
 
         static private FavoritList favorlist;
 
         private FavoritList()
         {
+            DownloadLimit = 10;
             favorites = new List<Favorit>();
             refreshAllContent = new BackgroundWorker();
             refreshAllContent.DoWork += RefreshAllContent_DoWork;
@@ -116,10 +135,18 @@ namespace AllContent_Client
         {
             refreshAllContent.RunWorkerAsync();
         }
-        public void Add(string source_name, int limit = 10)
+
+        public void LoadNextNews()
+        {
+            foreach (var favor in favorites)
+                favor.LoadNextNews(DownloadLimit);
+            AddEvent();
+        }
+
+        public void Add(string source_name)
         {
             Favorit favor = new Favorit(source_name);
-            favor.SelectLimit = limit;
+            favor.SelectLimit = DownloadLimit;
             favor.LoadAll();
             favorites.Add(favor);
 
