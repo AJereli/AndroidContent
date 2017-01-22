@@ -19,7 +19,7 @@ namespace AndroidContent.Tests
         static public User user;
         const string ContentLoadMark = "ContentLoad_Test_Logs";
 
-
+        
 
         public List<ContentUnit> cu_list;
         public ContentLoadTest()
@@ -30,7 +30,6 @@ namespace AndroidContent.Tests
             user.LoadFavoritSources();
             foreach (var fav in user.favoritSources)
                 FavoritList.Favorits.Add(fav);
-            FavoritList.Favorits.RefreshAll();
         }
 
     }
