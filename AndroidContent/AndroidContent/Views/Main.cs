@@ -17,7 +17,7 @@ using Android.Util;
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "Main Page TEST", MainLauncher = true, Icon = "@drawable/icon")]
+    [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon")]
     public class MainActivity : Activity
     {
         private List<ContentUnit> list_cu;
