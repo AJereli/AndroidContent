@@ -1642,6 +1642,9 @@ namespace AndroidContent
 		public partial class Id
 		{
 			
+			// aapt resource value: 0x7f060055
+			public const int Authorizationlayout = 2131099733;
+			
 			// aapt resource value: 0x7f06006f
 			public const int Email = 2131099759;
 			
@@ -1654,14 +1657,17 @@ namespace AndroidContent
 			// aapt resource value: 0x7f060057
 			public const int Password = 2131099735;
 			
+			// aapt resource value: 0x7f060070
+			public const int Reg = 2131099760;
+			
 			// aapt resource value: 0x7f060059
 			public const int Registration = 2131099737;
 			
-			// aapt resource value: 0x7f060070
-			public const int WebLayout = 2131099760;
-			
 			// aapt resource value: 0x7f060071
-			public const int WebView = 2131099761;
+			public const int WebLayout = 2131099761;
+			
+			// aapt resource value: 0x7f060072
+			public const int WebView = 2131099762;
 			
 			// aapt resource value: 0x7f060062
 			public const int action0 = 2131099746;
@@ -1710,9 +1716,6 @@ namespace AndroidContent
 			
 			// aapt resource value: 0x7f060028
 			public const int activity_chooser_view_content = 2131099688;
-			
-			// aapt resource value: 0x7f060055
-			public const int activity_main = 2131099733;
 			
 			// aapt resource value: 0x7f060014
 			public const int add = 2131099668;

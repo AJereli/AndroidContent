@@ -19,7 +19,7 @@ namespace AndroidContent.Views
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.RegistrationLayout);
-            var enter = FindViewById<Button>(Resource.Id.Enter);
+            var enter = FindViewById<Button>(Resource.Id.Reg);
             enter.Click += EnterClick;
         }
         void EnterClick(object sender, EventArgs e)
@@ -30,14 +30,13 @@ namespace AndroidContent.Views
             string email = FindViewById<EditText>(Resource.Id.Email).Text;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             AlertDialog error_dialog = builder.Create();
-            //Regex email_exp = new Regex("^([a-z0-9_-]+\\.)*[a-z0-9_-]+@[a-z0-9_-]+(\\.[a-z0-9_-]+)*\\.[a-z]{2,6}$");
-            if (log.Length < 4)
+            if (log.Length <= 4)
             {
                 error_dialog.SetTitle("Слишком короткий логин");
                 error_dialog.SetMessage("В поле для логина должно быть более четырех символов");
                 error_dialog.Show();
             }
-            else if (log.Length < 4)
+            else if (log.Length <= 4)
             {
                 error_dialog.SetTitle("Слишком короткий пароль");
                 error_dialog.SetMessage("В поле для пароля должно быть более четырех символов");
@@ -63,7 +62,6 @@ namespace AndroidContent.Views
                     StartActivity(back);
                 }
             }
-
         }
     }
 }
