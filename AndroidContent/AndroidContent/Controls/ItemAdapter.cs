@@ -32,7 +32,7 @@ namespace AndroidContent
             Image = itemView.FindViewById<ImageView>(Resource.Id.content_imgImageView);
             Header = itemView.FindViewById<TextView>(Resource.Id.content_HeaderTextView);
             Description = itemView.FindViewById<TextView>(Resource.Id.content_DescriptionTextView);
-
+            Date = itemView.FindViewById<TextView>(Resource.Id.content_DateTextView);
             itemView.Clickable = true;
             itemView.SetOnClickListener(this);
         }
@@ -43,6 +43,36 @@ namespace AndroidContent
             Intent intent = new Intent(context, Java.Lang.Class.FromType(typeof(WebActivity)));
             intent.SetData(Android.Net.Uri.Parse(url));
             context.StartActivity(intent);
+        }
+    }
+
+    public class ItemScrollListener : RecyclerView.OnScrollListener
+    {
+        public delegate void LoadMoreEventHandler(object sender, EventArgs e);
+        public event LoadMoreEventHandler LoadMoreEvent;
+
+        int visibleItemCount;
+        int totalItemCount;
+        int firstVisibleItems;
+        LinearLayoutManager layoutManager;
+
+        public ItemScrollListener (LinearLayoutManager _mLayoutManager)
+        {
+            layoutManager = _mLayoutManager;
+            
+        }
+        public override void OnScrolled(RecyclerView recyclerView, int dx, int dy)
+        {
+            base.OnScrolled(recyclerView, dx, dy);
+
+            visibleItemCount = recyclerView.ChildCount;
+            totalItemCount = recyclerView.GetAdapter().ItemCount;
+            firstVisibleItems = layoutManager.FindFirstVisibleItemPosition();
+
+            if ((visibleItemCount + firstVisibleItems) >= totalItemCount)
+            {
+                LoadMoreEvent(this, null);
+            }
         }
     }
 
@@ -62,6 +92,7 @@ namespace AndroidContent
             OnCreateViewHolder(ViewGroup parent, int viewType)
         {
             // Inflate the CardView for the item:
+            
             View itemView = LayoutInflater.From(parent.Context).
                         Inflate(Resource.Layout.item, parent, false);
 
@@ -75,10 +106,18 @@ namespace AndroidContent
         {
             ItemViewHolder vh = holder as ItemViewHolder;
             vh.url = list_cu[position].URL;
+            if (list_cu[position].imgUrl == "")
+            {
+                vh.Image.Visibility = ViewStates.Gone;
+            }
+            else {
+                Picasso.With(context).Load(list_cu[position].imgUrl).Resize(320, 240).Into(vh.Image);
+                vh.Image.Visibility = ViewStates.Visible;
+
+            }
             vh.Header.Text = list_cu[position].header;
             vh.Description.Text = list_cu[position].description;
-            if (list_cu[position].imgUrl != "")
-                Picasso.With(context).Load(list_cu[position].imgUrl).Into(vh.Image);
+            vh.Date.Text = list_cu[position].date;
         }
 
         public override int ItemCount

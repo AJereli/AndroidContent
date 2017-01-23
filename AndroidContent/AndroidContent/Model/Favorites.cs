@@ -24,7 +24,9 @@ namespace AllContent_Client
             content = new List<ContentUnit>();
             sqlParamSource = new MySqlParameter("sour", source);
         }
-
+        /// <summary>
+        /// Download first N item from mysql, where N - limit of download
+        /// </summary>
         public void LoadAll()
         {
             using (DBClient client = new DBClient())
@@ -46,19 +48,20 @@ namespace AllContent_Client
                 AddToCUList();
             }
         }
-
+        /// <summary>
+        /// Downloading new items if they exist
+        /// </summary>
         public void Refresh()
         {
             using (DBClient client = new DBClient())
             {
-                List<string> chek_id = client.SelectQuery("SELECT MAX(id) FROM content " +
-                          "WHERE source = @" + sqlParamSource.ParameterName, sqlParamSource);
-
+                List<string> chek_id = client.SelectQuery("SELECT MAX(id) FROM content "+
+                        $"WHERE source = @{sqlParamSource.ParameterName}", sqlParamSource);
 
                 if (Convert.ToUInt32(chek_id[0]) > CurrId)
                 {
                     selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                            "WHERE source = @" + sqlParamSource.ParameterName + " AND id > " + CurrId.ToString() +
+                           $"WHERE source = @{sqlParamSource.ParameterName} AND id > {CurrId.ToString()}" +
                             " ORDER BY id DESC LIMIT " + SelectLimit, sqlParamSource);
                     AddToCUList();
                 }

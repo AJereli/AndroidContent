@@ -25,7 +25,7 @@ namespace AndroidContent.Views
 
         private RecyclerView mRecyclerView;
         private ItemAdapter mAdapter;
-        private RecyclerView.LayoutManager mLayoutManager;
+        private LinearLayoutManager mLayoutManager;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -47,11 +47,12 @@ namespace AndroidContent.Views
             CLT = new Tests.ContentLoadTest();
 
             mAdapter = new ItemAdapter(list_cu, this);
+            
             mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
             mLayoutManager = new LinearLayoutManager(this);
-            //mAdapter.ItemClick += MAdapter_ItemClick;
-
+            ItemScrollListener scrollListener = new ItemScrollListener(mLayoutManager);
             mRecyclerView.SetLayoutManager(mLayoutManager);
+            mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
         }
