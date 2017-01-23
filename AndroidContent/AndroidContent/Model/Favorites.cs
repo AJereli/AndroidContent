@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using MySql.Data.MySqlClient;
 using System.Collections;
+using System.Threading.Tasks;
 
 namespace AllContent_Client
 {
@@ -105,7 +106,7 @@ namespace AllContent_Client
 
         private List<Favorit> favorites;
         private BackgroundWorker refreshAllContent;
-
+        private BackgroundWorker LoadContentWorker;
         static private FavoritList favorlist;
 
         private FavoritList()
@@ -113,6 +114,8 @@ namespace AllContent_Client
             DownloadLimit = 10;
             favorites = new List<Favorit>();
             refreshAllContent = new BackgroundWorker();
+            LoadContentWorker = new BackgroundWorker();
+            LoadContentWorker.DoWork += LoadNextNews;
             refreshAllContent.DoWork += RefreshAllContent_DoWork;
         }
 
@@ -139,8 +142,9 @@ namespace AllContent_Client
             refreshAllContent.RunWorkerAsync();
         }
 
-        public void LoadNextNews()
+        public void LoadNextNews(object sender, DoWorkEventArgs e)
         {
+           // Task task = new Task(AddEvent);
             foreach (var favor in favorites)
                 favor.LoadNextNews(DownloadLimit);
             AddEvent();

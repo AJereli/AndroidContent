@@ -21,11 +21,13 @@ namespace AndroidContent.Views
     public class MainActivity : Activity
     {
         private List<ContentUnit> list_cu;
-        Tests.ContentLoadTest CLT;
+        private Tests.ContentLoadTest CLT;
 
+        bool isLoading = false;
         private RecyclerView mRecyclerView;
         private ItemAdapter mAdapter;
         private LinearLayoutManager mLayoutManager;
+        private ItemScrollListener scrollListener;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -35,11 +37,17 @@ namespace AndroidContent.Views
 
             list_cu = new List<ContentUnit>();
 
+            mLayoutManager = new LinearLayoutManager(this);
+            scrollListener = new ItemScrollListener(mLayoutManager);
+
+            scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
+
             FavoritList.Favorits.AddEvent += () =>
             {
                 foreach (var fav in FavoritList.Favorits)
                 {
                     list_cu.AddRange(fav.content);
+                    isLoading = false;
                     Log.Info("List_cu cnt: ", list_cu.Count.ToString());
                 }
 
@@ -49,15 +57,22 @@ namespace AndroidContent.Views
             mAdapter = new ItemAdapter(list_cu, this);
             
             mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            mLayoutManager = new LinearLayoutManager(this);
-            ItemScrollListener scrollListener = new ItemScrollListener(mLayoutManager);
+          
             mRecyclerView.SetLayoutManager(mLayoutManager);
             mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
         }
 
-       
+        private void ScrollListener_LoadMoreEvent(object sender, EventArgs e)
+        {
+            if (!isLoading)
+            {
+                isLoading = true;
+                FavoritList.Favorits.LoadNextNews(sender, null);
+                mAdapter.NotifyDataSetChanged();
+            }
+        }
     }
 
    

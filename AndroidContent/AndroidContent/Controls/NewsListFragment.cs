@@ -95,7 +95,7 @@ namespace AndroidContent
 
             if (position == Count - 1)
             {
-                FavoritList.Favorits.LoadNextNews();
+                //FavoritList.Favorits.LoadNextNews();
                 Log.Info("COUNT INFO", "Pos: " + position + " CNT: " + Count);
             }
 
