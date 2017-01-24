@@ -13,6 +13,7 @@ namespace AllContent_Client
         public List<ContentUnit> content;
         public uint SelectLimit { get; set; }
         private uint CurrId;
+        private uint currDownload = 0;
 
         private List<string> selectResult = null;
 
@@ -32,22 +33,35 @@ namespace AllContent_Client
         {
             using (DBClient client = new DBClient())
             {
+                CurrId = Convert.ToUInt32(client.SelectQuery("SELECT COUNT(header) FROM content " +
+                       $"WHERE source = @{sqlParamSource.ParameterName}", sqlParamSource)[0]);
+
                 selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                            "WHERE source=@sour" + " ORDER BY id DESC LIMIT " + SelectLimit
+                            "WHERE source=@sour" + " ORDER BY localID DESC LIMIT " + SelectLimit
                             , sqlParamSource);
                 AddToCUList();
             }
         }
-
-        public void LoadNextNews(uint DownloadLimit)
+        /// <summary>
+        /// Download new news and returns true, if there is no new news - return false
+        /// </summary>
+        /// <param name="DownloadLimit"></param>
+        /// <returns></returns>
+        public bool LoadNextNews(uint DownloadLimit)
         {
-            using (DBClient client = new DBClient())
+            if (currDownload < CurrId)
             {
-                selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                           "WHERE source = @" + sqlParamSource.ParameterName + " AND id > " + CurrId.ToString() +
-                           " ORDER BY id DESC LIMIT " + DownloadLimit, sqlParamSource);
-                AddToCUList();
+                using (DBClient client = new DBClient())
+                {
+                    selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
+                               "WHERE source = @" + sqlParamSource.ParameterName + " AND localID < " + (CurrId - currDownload).ToString() +
+                               " ORDER BY localID DESC LIMIT " + DownloadLimit, sqlParamSource);
+                    AddToCUList();
+                }
+                return true;
             }
+            else
+                return false;
         }
         /// <summary>
         /// Downloading new items if they exist
@@ -56,25 +70,29 @@ namespace AllContent_Client
         {
             using (DBClient client = new DBClient())
             {
-                List<string> chek_id = client.SelectQuery("SELECT MAX(id) FROM content "+
+                List<string> chek_id = client.SelectQuery("SELECT COUNT(header) FROM content " +
                         $"WHERE source = @{sqlParamSource.ParameterName}", sqlParamSource);
 
                 if (Convert.ToUInt32(chek_id[0]) > CurrId)
                 {
                     selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                           $"WHERE source = @{sqlParamSource.ParameterName} AND id > {CurrId.ToString()}" +
-                            " ORDER BY id DESC LIMIT " + SelectLimit, sqlParamSource);
+                           $"WHERE source = @{sqlParamSource.ParameterName} AND localID > {CurrId.ToString()}" +
+                            " ORDER BY localID DESC LIMIT " + SelectLimit, sqlParamSource);
                     AddToCUList();
                 }
+                CurrId = Convert.ToUInt32(chek_id[0]);
             }
         }
 
 
         private void AddToCUList()
         {
+
+
             if (selectResult != null && selectResult.Count != 0)
             {
-                CurrId = (uint)Convert.ToUInt32(selectResult[0]);
+                content.Clear();
+                //CurrId = (uint)Convert.ToUInt32(selectResult[0]);
 
                 for (int i = 0; i < selectResult.Count; i += 8)
                 {
@@ -90,6 +108,7 @@ namespace AllContent_Client
                     cu.date = selectResult[i + 7];
                     content.Add(cu);
                 }
+                currDownload += (uint)content.Count;
             }
         }
 
@@ -98,15 +117,14 @@ namespace AllContent_Client
 
     class FavoritList : IEnumerable<Favorit>
     {
-        public event Action AddEvent = delegate { };
+        public event Action<Favorit> AddEvent;
 
         public event Action DeleteEvent = delegate { };
-        public uint  DownloadLimit { get; set; }
+        public uint DownloadLimit { get; set; }
 
 
         private List<Favorit> favorites;
         private BackgroundWorker refreshAllContent;
-        private BackgroundWorker LoadContentWorker;
         static private FavoritList favorlist;
 
         private FavoritList()
@@ -114,8 +132,6 @@ namespace AllContent_Client
             DownloadLimit = 10;
             favorites = new List<Favorit>();
             refreshAllContent = new BackgroundWorker();
-            LoadContentWorker = new BackgroundWorker();
-            LoadContentWorker.DoWork += LoadNextNews;
             refreshAllContent.DoWork += RefreshAllContent_DoWork;
         }
 
@@ -133,7 +149,7 @@ namespace AllContent_Client
         {
             foreach (var favor in favorites)
                 favor.Refresh();
-            
+
         }
 
 
@@ -142,12 +158,16 @@ namespace AllContent_Client
             refreshAllContent.RunWorkerAsync();
         }
 
-        public void LoadNextNews(object sender, DoWorkEventArgs e)
+        public void LoadNextNews(AndroidContent.ItemAdapter adapter)
         {
-           // Task task = new Task(AddEvent);
             foreach (var favor in favorites)
-                favor.LoadNextNews(DownloadLimit);
-            AddEvent();
+            {
+                if (favor.LoadNextNews(DownloadLimit))
+                {
+                    AddEvent(favor);
+                    adapter.NotifyDataSetChanged();
+                }
+            }
         }
 
         public void Add(string source_name)
@@ -157,7 +177,7 @@ namespace AllContent_Client
             favor.LoadAll();
             favorites.Add(favor);
 
-            AddEvent();
+            AddEvent(favor);
         }
         public void Delete(string source_name)
         {

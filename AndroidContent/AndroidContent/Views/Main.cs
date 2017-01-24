@@ -42,22 +42,22 @@ namespace AndroidContent.Views
 
             scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
 
-            FavoritList.Favorits.AddEvent += () =>
+            FavoritList.Favorits.AddEvent += (Favorit fav) =>
             {
-                foreach (var fav in FavoritList.Favorits)
-                {
-                    list_cu.AddRange(fav.content);
-                    isLoading = false;
-                    Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-                }
+                if (fav.content.Count == 0)
+                    return;
+                list_cu.AddRange(fav.content);
+                isLoading = false;
+                Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+
 
             };
             CLT = new Tests.ContentLoadTest();
 
             mAdapter = new ItemAdapter(list_cu, this);
-            
+
             mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
-          
+
             mRecyclerView.SetLayoutManager(mLayoutManager);
             mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
@@ -69,12 +69,11 @@ namespace AndroidContent.Views
             if (!isLoading)
             {
                 isLoading = true;
-                FavoritList.Favorits.LoadNextNews(sender, null);
-                mAdapter.NotifyDataSetChanged();
+                FavoritList.Favorits.LoadNextNews(mAdapter);
             }
         }
     }
 
-   
+
 
 }
