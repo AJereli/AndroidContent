@@ -13,12 +13,13 @@ using Android.Support.V7.Widget;
 using Android.Support.V7.App;
 using AllContent_Client;
 using Android.Util;
+using Alert_Dialog = Android.App.AlertDialog;
 
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon")]
-    public class MainActivity : Activity
+    [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
+    public class MainActivity : AppCompatActivity
     {
         private List<ContentUnit> list_cu;
         private Tests.ContentLoadTest CLT;
@@ -40,12 +41,12 @@ namespace AndroidContent.Views
             mLayoutManager = new LinearLayoutManager(this);
             scrollListener = new ItemScrollListener(mLayoutManager);
 
-            scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
+           scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
 
             FavoritList.Favorits.AddEvent += (Favorit fav) =>
-            {
-                if (fav.content.Count == 0)
-                    return;
+           {
+               if (fav.content.Count == 0)
+                   return;
                 list_cu.AddRange(fav.content);
                 isLoading = false;
                 Log.Info("List_cu cnt: ", list_cu.Count.ToString());
@@ -69,11 +70,13 @@ namespace AndroidContent.Views
             if (!isLoading)
             {
                 isLoading = true;
-                FavoritList.Favorits.LoadNextNews(mAdapter);
+               FavoritList.Favorits.LoadNextNews(mAdapter);
             }
         }
+        public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
+        {
+            Finish();
+            return base.OnKeyDown(keyCode, e);
+        }
     }
-
-
-
 }

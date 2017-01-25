@@ -13,7 +13,7 @@ using AllContent_Client;
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "AuthorizationActivity", MainLauncher = true)]
+    [Activity(Label = "A", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
     public class AuthorizationActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
@@ -44,6 +44,7 @@ namespace AndroidContent.Views
                     //MainView.user = this.user;
                     var main = new Intent(this, typeof(MainActivity));
                     StartActivity(main);
+                    Finish();
                 }
                 else
                 {
