@@ -18,11 +18,11 @@
           android:id="@+id/content_imgImageView"
           android:layout_width="wrap_content"
           android:layout_height="wrap_content"
-          android:maxHeight="250dp"
-          android:maxWidth="250dp"
+          android:maxHeight="300dp"
+          android:maxWidth="350dp"
           android:layout_alignParentRight="true"
           android:padding="11dp"
-          android:src="@drawable/icon" />
+          />
       <TextView
           android:id="@+id/content_HeaderTextView"
           android:layout_width="match_parent"

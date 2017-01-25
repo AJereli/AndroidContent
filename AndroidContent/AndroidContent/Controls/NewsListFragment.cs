@@ -26,15 +26,15 @@ namespace AndroidContent
 
             list_cu = new List<ContentUnit>();
           
-            FavoritList.Favorits.AddEvent += () =>
-            {
-                foreach (var fav in FavoritList.Favorits)
-                {
-                    list_cu.AddRange(fav.content);
-                    Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-                }
+            //FavoritList.Favorits.AddEvent += () =>
+            //{
+            //    foreach (var fav in FavoritList.Favorits)
+            //    {
+            //        list_cu.AddRange(fav.content);
+            //        Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+            //    }
 
-            };
+            //};
             CLT = new Tests.ContentLoadTest();
             
             ContentUnitAdapter adapter = new ContentUnitAdapter(Activity, list_cu);
@@ -95,7 +95,7 @@ namespace AndroidContent
 
             if (position == Count - 1)
             {
-                FavoritList.Favorits.LoadNextNews();
+                //FavoritList.Favorits.LoadNextNews();
                 Log.Info("COUNT INFO", "Pos: " + position + " CNT: " + Count);
             }
 
