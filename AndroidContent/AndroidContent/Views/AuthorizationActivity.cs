@@ -36,10 +36,9 @@ namespace AndroidContent.Views
             string passw = FindViewById<EditText>(Resource.Id.Password).Text;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             AlertDialog error_dialog = builder.Create();
-            User user = new User();
             try
             {
-                if (user.Authorization(log, passw))
+                if (User.MainUser.Authorization(log, passw))
                 {
                     //MainView.user = this.user;
                     var main = new Intent(this, typeof(MainActivity));

@@ -16,21 +16,17 @@ namespace AndroidContent.Tests
 {
     public class ContentLoadTest
     {
-        static public User user;
-        const string ContentLoadMark = "ContentLoad_Test_Logs";
 
-        
+        //static public User user;
+        //const string ContentLoadMark = "ContentLoad_Test_Logs";
 
-        public List<ContentUnit> cu_list;
-        public ContentLoadTest()
-        {
-            cu_list = new List<ContentUnit>();
-            user = new User();
-            Log.Info(ContentLoadMark, "Authoriz res: " + user.Authorization("TestLogin", "TestLogin").ToString());
-            user.LoadFavoritSources();
-            foreach (var fav in user.favoritSources)
-                FavoritList.Favorits.Add(fav);
-        }
+        //public ContentLoadTest()
+        //{
+        //    Log.Info(ContentLoadMark, "Authoriz res: " + user.Authorization("TestLogin", "TestLogin").ToString());
+        //    user.LoadFavoritSources();
+        //    foreach (var fav in user.favoritSources)
+        //        FavoritList.Favorits.Add(fav);
+        //}
 
     }
 }

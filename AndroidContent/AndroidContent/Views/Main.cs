@@ -21,7 +21,6 @@ namespace AndroidContent.Views
     public class MainActivity : Activity
     {
         private List<ContentUnit> list_cu;
-        private Tests.ContentLoadTest CLT;
 
         bool isLoading = false;
         private RecyclerView mRecyclerView;
@@ -34,7 +33,6 @@ namespace AndroidContent.Views
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.MainLayout);
-
             list_cu = new List<ContentUnit>();
 
             mLayoutManager = new LinearLayoutManager(this);
@@ -52,7 +50,7 @@ namespace AndroidContent.Views
 
 
             };
-            CLT = new Tests.ContentLoadTest();
+            User.MainUser.LoadFavoritSources();
 
             mAdapter = new ItemAdapter(list_cu, this);
 

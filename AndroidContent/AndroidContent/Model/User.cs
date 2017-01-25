@@ -6,12 +6,21 @@ namespace AllContent_Client
     public class User
     {
         static public string Name { get; private set; }
+        private static User main_user;
         public List<string> favoritSources { get; set; }
-        public User()
+        private User()
         {
             favoritSources = new List<string>();
         }
-
+        public static User MainUser
+        {
+            get
+            {
+                if (main_user == null)
+                    main_user = new User();
+                return main_user;
+            }
+        }
         public void UpdateFavor()
         {
             using (DBClient client = new DBClient())
@@ -22,7 +31,7 @@ namespace AllContent_Client
                 MySqlParameters mysql_params = new MySqlParameters();
                 mysql_params.AddParameter("favor", myStringIsBigIsVeryVeryBig);
                 mysql_params.AddParameter("login", User.Name);
-                
+
                 client.Query("UPDATE users SET favorites_source = @favor WHERE login=@login", mysql_params);
             }
         }
@@ -38,9 +47,14 @@ namespace AllContent_Client
                     foreach (var str in sources[0].Split(';'))
                     {
                         if (str != "")
+                        {
                             favoritSources.Add(str);
+                            FavoritList.Favorits.Add(str);
+                        }
                     }
             }
+           
+
         }
 
         public bool Authorization(string login, string password)
