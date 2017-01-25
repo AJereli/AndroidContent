@@ -21,11 +21,13 @@ namespace AndroidContent.Views
     public class MainActivity : Activity
     {
         private List<ContentUnit> list_cu;
-        Tests.ContentLoadTest CLT;
+        private Tests.ContentLoadTest CLT;
 
+        bool isLoading = false;
         private RecyclerView mRecyclerView;
         private ItemAdapter mAdapter;
-        private RecyclerView.LayoutManager mLayoutManager;
+        private LinearLayoutManager mLayoutManager;
+        private ItemScrollListener scrollListener;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -35,30 +37,43 @@ namespace AndroidContent.Views
 
             list_cu = new List<ContentUnit>();
 
-            FavoritList.Favorits.AddEvent += () =>
+            mLayoutManager = new LinearLayoutManager(this);
+            scrollListener = new ItemScrollListener(mLayoutManager);
+
+            scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
+
+            FavoritList.Favorits.AddEvent += (Favorit fav) =>
             {
-                foreach (var fav in FavoritList.Favorits)
-                {
-                    list_cu.AddRange(fav.content);
-                    Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-                }
+                if (fav.content.Count == 0)
+                    return;
+                list_cu.AddRange(fav.content);
+                isLoading = false;
+                Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+
 
             };
             CLT = new Tests.ContentLoadTest();
 
             mAdapter = new ItemAdapter(list_cu, this);
+
             mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            mLayoutManager = new LinearLayoutManager(this);
-            //mAdapter.ItemClick += MAdapter_ItemClick;
 
             mRecyclerView.SetLayoutManager(mLayoutManager);
+            mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
         }
 
-       
+        private void ScrollListener_LoadMoreEvent(object sender, EventArgs e)
+        {
+            if (!isLoading)
+            {
+                isLoading = true;
+                FavoritList.Favorits.LoadNextNews(mAdapter);
+            }
+        }
     }
 
-   
+
 
 }
