@@ -76,7 +76,7 @@ namespace AllContent_Client
                 if (Convert.ToUInt32(chek_id[0]) > CurrId)
                 {
                     selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                           $"WHERE source = @{sqlParamSource.ParameterName} AND localID > {CurrId.ToString()}" +
+                           $"WHERE source = @{sqlParamSource.ParameterName} AND localID > {chek_id.ToString()}" +
                             " ORDER BY localID DESC LIMIT " + SelectLimit, sqlParamSource);
                     AddToCUList();
                 }
@@ -84,7 +84,11 @@ namespace AllContent_Client
             }
         }
 
-
+        public void DeleteContent()
+        {
+            content.Clear();
+            currDownload = 0;
+        }
         private void AddToCUList()
         {
 
@@ -118,7 +122,7 @@ namespace AllContent_Client
     class FavoritList : IEnumerable<Favorit>
     {
         public event Action<Favorit> AddEvent;
-
+        public event Action<Favorit> ReloadAllhEvent;
         public event Action DeleteEvent = delegate { };
         public uint DownloadLimit { get; set; }
 
@@ -153,9 +157,19 @@ namespace AllContent_Client
         }
 
 
-        public void RefreshAll()
+        public Task ReloadAll(AndroidContent.ItemAdapter adapter)
         {
-            refreshAllContent.RunWorkerAsync();
+            return Task.Run(() =>
+            {
+                foreach (var favor in favorites)
+                {
+                    favor.DeleteContent();
+                    favor.LoadAll();
+                    ReloadAllhEvent(favor);
+                   // adapter.NotifyDataSetChanged();
+                }
+            });
+
         }
 
         public void LoadNextNews(AndroidContent.ItemAdapter adapter)
@@ -169,6 +183,8 @@ namespace AllContent_Client
                 }
             }
         }
+
+
 
         public void Add(string source_name)
         {

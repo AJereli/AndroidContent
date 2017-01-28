@@ -91,13 +91,11 @@ namespace AndroidContent
         public override RecyclerView.ViewHolder
             OnCreateViewHolder(ViewGroup parent, int viewType)
         {
-            // Inflate the CardView for the item:
             
             View itemView = LayoutInflater.From(parent.Context).
                         Inflate(Resource.Layout.item, parent, false);
 
-            // Create a ViewHolder to find and hold these view references, and 
-            // register OnClick with the view holder:
+          
             ItemViewHolder vh = new ItemViewHolder(itemView, OnClick);
             return vh;
         }

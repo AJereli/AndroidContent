@@ -13,12 +13,12 @@ using Android.Support.V7.Widget;
 using Android.Support.V7.App;
 using AllContent_Client;
 using Android.Util;
-
+using Android.Support.V4.Widget;
 
 namespace AndroidContent.Views
 {
     [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon")]
-    public class MainActivity : Activity
+    public class MainActivity : Activity /*, SwipeRefreshLayout.IOnRefreshListener */
     {
         private List<ContentUnit> list_cu;
 
@@ -27,6 +27,7 @@ namespace AndroidContent.Views
         private ItemAdapter mAdapter;
         private LinearLayoutManager mLayoutManager;
         private ItemScrollListener scrollListener;
+        SwipeRefreshLayout refresher;
         protected override void OnCreate(Bundle bundle)
         {
             base.OnCreate(bundle);
@@ -35,21 +36,17 @@ namespace AndroidContent.Views
             SetContentView(Resource.Layout.MainLayout);
             list_cu = new List<ContentUnit>();
 
+            refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
+            refresher.Refresh += Refresher_Refresh;
+        
+
             mLayoutManager = new LinearLayoutManager(this);
             scrollListener = new ItemScrollListener(mLayoutManager);
 
             scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
 
-            FavoritList.Favorits.AddEvent += (Favorit fav) =>
-            {
-                if (fav.content.Count == 0)
-                    return;
-                list_cu.AddRange(fav.content);
-                isLoading = false;
-                Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-
-
-            };
+            FavoritList.Favorits.ReloadAllhEvent += NewContentEvent;
+            FavoritList.Favorits.AddEvent += NewContentEvent;
             User.MainUser.LoadFavoritSources();
 
             mAdapter = new ItemAdapter(list_cu, this);
@@ -62,6 +59,23 @@ namespace AndroidContent.Views
 
         }
 
+        private void NewContentEvent(Favorit fav)
+        {
+            if (fav.content.Count == 0)
+                return;
+            list_cu.AddRange(fav.content);
+            isLoading = false;
+            Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+        }
+
+        async private void Refresher_Refresh(object sender, EventArgs e)
+        {
+            await FavoritList.Favorits.ReloadAll(mAdapter);
+            mAdapter.NotifyDataSetChanged();
+            refresher.Refreshing = false;
+
+        }
+
         private void ScrollListener_LoadMoreEvent(object sender, EventArgs e)
         {
             if (!isLoading)
@@ -70,6 +84,8 @@ namespace AndroidContent.Views
                 FavoritList.Favorits.LoadNextNews(mAdapter);
             }
         }
+
+       
     }
 
 
