@@ -13,7 +13,6 @@ using Android.Support.V7.Widget;
 using Android.Support.V7.App;
 using AllContent_Client;
 using Android.Util;
-using Alert_Dialog = Android.App.AlertDialog;
 
 
 namespace AndroidContent.Views
@@ -23,7 +22,7 @@ namespace AndroidContent.Views
     {
         private List<ContentUnit> list_cu;
         private Tests.ContentLoadTest CLT;
-
+        static public string username { get; set; }
         bool isLoading = false;
         private RecyclerView mRecyclerView;
         private ItemAdapter mAdapter;
@@ -37,7 +36,7 @@ namespace AndroidContent.Views
             SetContentView(Resource.Layout.MainLayout);
 
             list_cu = new List<ContentUnit>();
-
+            
             mLayoutManager = new LinearLayoutManager(this);
             scrollListener = new ItemScrollListener(mLayoutManager);
 
@@ -63,6 +62,9 @@ namespace AndroidContent.Views
             mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
+            var mUsername = FindViewById<TextView>(Resource.Id.username);
+           
+            //mUsername.Text = username;
         }
 
         private void ScrollListener_LoadMoreEvent(object sender, EventArgs e)

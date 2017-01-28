@@ -44,12 +44,11 @@ namespace AndroidContent.Views
             string log = FindViewById<EditText>(Resource.Id.txtLogin).Text;
             string passw = FindViewById<EditText>(Resource.Id.txtPassword).Text;
             User user = new User();
-            TextInputLayout passwordWrapper = FindViewById<TextInputLayout>(Resource.Id.txtInputLayoutPassword);
             try
             {
                 if (user.Authorization(log, passw))
                 {
-                    //MainView.user = this.user;
+                    MainActivity.username = log;
                     var main = new Intent(this, typeof(MainActivity));
                     StartActivity(main);
                     Finish();
@@ -59,6 +58,7 @@ namespace AndroidContent.Views
                     error_dialog.SetTitle("Ошибка авторизации");
                     error_dialog.SetMessage("Неправильный логин или пароль");
                     error_dialog.Show();
+                    mProgressDialog.Hide();
                 }
             }
             catch (MySql.Data.MySqlClient.MySqlException exp)
@@ -68,6 +68,7 @@ namespace AndroidContent.Views
                     error_dialog.SetTitle("Проблема подключением");
                     error_dialog.SetMessage("Сервер не отвечает");
                     error_dialog.Show();
+                    mProgressDialog.Hide();
                 }                    
             }
         }

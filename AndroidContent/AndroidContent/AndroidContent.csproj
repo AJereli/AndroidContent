@@ -152,9 +152,6 @@
     <AndroidResource Include="Resources\layout\RegistrationLayout.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
-    <AndroidResource Include="Resources\layout\Main.axml">
-      <SubType>Designer</SubType>
-    </AndroidResource>
     <AndroidResource Include="Resources\layout\include_list_viewpager.axml">
       <SubType>Designer</SubType>
     </AndroidResource>
