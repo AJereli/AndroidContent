@@ -2083,32 +2083,32 @@ namespace AndroidContent
 		public partial class Id
 		{
 			
-			// aapt resource value: 0x7f06006d
-			public const int Authorizationlayout = 2131099757;
-			
 			// aapt resource value: 0x7f060097
-			public const int Email = 2131099799;
+			public const int Authorizationlayout = 2131099799;
+			
+			// aapt resource value: 0x7f06009a
+			public const int Email = 2131099802;
 			
 			// aapt resource value: 0x7f060070
 			public const int Enter = 2131099760;
 			
-			// aapt resource value: 0x7f06006e
-			public const int Login = 2131099758;
-			
-			// aapt resource value: 0x7f06006f
-			public const int Password = 2131099759;
-			
 			// aapt resource value: 0x7f060098
-			public const int Reg = 2131099800;
-			
-			// aapt resource value: 0x7f060071
-			public const int Registration = 2131099761;
+			public const int Login = 2131099800;
 			
 			// aapt resource value: 0x7f060099
-			public const int WebLayout = 2131099801;
+			public const int Password = 2131099801;
 			
-			// aapt resource value: 0x7f06009a
-			public const int WebView = 2131099802;
+			// aapt resource value: 0x7f06009b
+			public const int Reg = 2131099803;
+			
+			// aapt resource value: 0x7f060071
+			public const int TVRegistration = 2131099761;
+			
+			// aapt resource value: 0x7f06009c
+			public const int WebLayout = 2131099804;
+			
+			// aapt resource value: 0x7f06009d
+			public const int WebView = 2131099805;
 			
 			// aapt resource value: 0x7f06008a
 			public const int action0 = 2131099786;
@@ -2359,17 +2359,17 @@ namespace AndroidContent
 			// aapt resource value: 0x7f060016
 			public const int multiply = 2131099670;
 			
+			// aapt resource value: 0x7f0600a1
+			public const int nav_discussion = 2131099809;
+			
+			// aapt resource value: 0x7f0600a0
+			public const int nav_friends = 2131099808;
+			
 			// aapt resource value: 0x7f06009e
-			public const int nav_discussion = 2131099806;
+			public const int nav_home = 2131099806;
 			
-			// aapt resource value: 0x7f06009d
-			public const int nav_friends = 2131099805;
-			
-			// aapt resource value: 0x7f06009b
-			public const int nav_home = 2131099803;
-			
-			// aapt resource value: 0x7f06009c
-			public const int nav_messages = 2131099804;
+			// aapt resource value: 0x7f06009f
+			public const int nav_messages = 2131099807;
 			
 			// aapt resource value: 0x7f060088
 			public const int nav_view = 2131099784;
@@ -2541,6 +2541,15 @@ namespace AndroidContent
 			
 			// aapt resource value: 0x7f060072
 			public const int touch_outside = 2131099762;
+			
+			// aapt resource value: 0x7f06006e
+			public const int txtInputLayoutPassword = 2131099758;
+			
+			// aapt resource value: 0x7f06006d
+			public const int txtLogin = 2131099757;
+			
+			// aapt resource value: 0x7f06006f
+			public const int txtPassword = 2131099759;
 			
 			// aapt resource value: 0x7f060009
 			public const int up = 2131099657;
