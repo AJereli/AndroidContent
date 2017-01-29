@@ -37,26 +37,41 @@ namespace AndroidContent.Views
             list_cu = new List<ContentUnit>();
 
             refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
-            refresher.Refresh += Refresher_Refresh;
-        
+            mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
+
+            refresher.Refresh += Refresher_Refresh;        
 
             mLayoutManager = new LinearLayoutManager(this);
             scrollListener = new ItemScrollListener(mLayoutManager);
 
-            scrollListener.LoadMoreEvent += ScrollListener_LoadMoreEvent;
+            scrollListener.LoadMoreEvent += (s, e) =>
+            {
+                if (!isLoading)
+                {
+                    isLoading = true;
+                    FavoritList.Favorits.LoadNextNews(mAdapter);
+                }
+            };
 
-            FavoritList.Favorits.ReloadAllhEvent += NewContentEvent;
+            FavoritList.Favorits.ReloadAllhEvent += Favorits_ReloadAllhEvent; ;
             FavoritList.Favorits.AddEvent += NewContentEvent;
+
             User.MainUser.LoadFavoritSources();
 
             mAdapter = new ItemAdapter(list_cu, this);
-
-            mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
 
             mRecyclerView.SetLayoutManager(mLayoutManager);
             mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
+        }
+
+        private void Favorits_ReloadAllhEvent(Favorit obj)
+        {
+            if (obj.content.Count == 0)
+                return;
+            list_cu.RemoveAll(i => i.source == obj.Source);
+            list_cu.AddRange(obj.content);
         }
 
         private void NewContentEvent(Favorit fav)
@@ -65,7 +80,7 @@ namespace AndroidContent.Views
                 return;
             list_cu.AddRange(fav.content);
             isLoading = false;
-            Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+           // Log.Info("List_cu cnt: ", list_cu.Count.ToString());
         }
 
         async private void Refresher_Refresh(object sender, EventArgs e)
@@ -75,16 +90,6 @@ namespace AndroidContent.Views
             refresher.Refreshing = false;
 
         }
-
-        private void ScrollListener_LoadMoreEvent(object sender, EventArgs e)
-        {
-            if (!isLoading)
-            {
-                isLoading = true;
-                FavoritList.Favorits.LoadNextNews(mAdapter);
-            }
-        }
-
        
     }
 

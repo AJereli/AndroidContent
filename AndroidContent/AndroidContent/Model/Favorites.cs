@@ -128,15 +128,13 @@ namespace AllContent_Client
 
 
         private List<Favorit> favorites;
-        private BackgroundWorker refreshAllContent;
         static private FavoritList favorlist;
 
         private FavoritList()
         {
             DownloadLimit = 10;
             favorites = new List<Favorit>();
-            refreshAllContent = new BackgroundWorker();
-            refreshAllContent.DoWork += RefreshAllContent_DoWork;
+         
         }
 
         static public FavoritList Favorits
@@ -149,13 +147,7 @@ namespace AllContent_Client
             }
         }
 
-        private void RefreshAllContent_DoWork(object sender, DoWorkEventArgs e)
-        {
-            foreach (var favor in favorites)
-                favor.Refresh();
-
-        }
-
+        
 
         public Task ReloadAll(AndroidContent.ItemAdapter adapter)
         {
