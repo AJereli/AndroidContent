@@ -1,75 +1,77 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<FrameLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/Authorizationlayout"
+    android:orientation="vertical"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
-    <LinearLayout
-        android:orientation="vertical"
+    android:padding="16dp">
+  <LinearLayout
+      android:layout_width="wrap_content"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_gravity="top|center">
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="1"
-        android:gravity="center_horizontal"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentStart="true">
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_weight="1"/>
-
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Введите логин"
-            android:gravity="center_horizontal"
-            android:id="@+id/Login"/>
-      
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Введите пароль"
-            android:gravity="center_horizontal"
-            android:inputType="textPassword"
-            android:id="@+id/Password"/>
-      
-        <EditText
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_weight="1"
-            android:ems="10"
-            android:hint="Введите E-mail"
-            android:gravity="center_horizontal"
-            android:inputType="textEmailAddress"
-            android:id="@+id/Email"/>
-      
-        <RelativeLayout
-            android:layout_width="match_parent"
-            android:layout_height="fill_parent"
-            android:layout_weight="1"
-            android:gravity="center">
-            <Button
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:text="Продолжить"
-                android:id="@+id/Reg"/>
-        </RelativeLayout>
-    </LinearLayout>
-
-    <RelativeLayout
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Android Content"
+        android:textSize="30sp"
+        android:textColor="#333333"/>
+    <TextView
         android:layout_width="match_parent"
-        android:layout_height="fill_parent"
-        android:layout_weight="4"
-        android:gravity="center"/>
-</LinearLayout>
+        android:layout_height="wrap_content"
+        android:layout_centerInParent="true"
+        android:gravity="center"
+        android:text="Регистрация"
+        android:textSize="20sp"
+        android:textColor="#333333"/>
+  </LinearLayout>
+
+  <LinearLayout
+      android:layout_width="match_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:layout_gravity="center">
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <EditText
+          android:id="@+id/txtLogin"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:inputType="textEmailAddress"
+          android:hint="Логин" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:id="@+id/txtInputLayoutPassword"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <EditText
+          android:id="@+id/txtPassword"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:inputType="textPassword"
+          android:hint="Пароль" />
+    </android.support.design.widget.TextInputLayout>
+    <android.support.design.widget.TextInputLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+      <EditText
+          android:id="@+id/txtemail"
+          android:layout_width="match_parent"
+          android:layout_height="wrap_content"
+          android:layout_gravity="center"
+          android:inputType="textEmailAddress"
+          android:hint="E-mail" />
+    </android.support.design.widget.TextInputLayout>
+    <Button
+        android:id="@+id/Continue"
+        android:layout_marginTop="10dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Продолжить" />
+  </LinearLayout>
+</FrameLayout>

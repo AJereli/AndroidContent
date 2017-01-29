@@ -12,22 +12,26 @@ using AllContent_Client;
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "RegistrationActivity")]
+    [Activity(Label = "RegistrationActivity", Theme = "@style/Theme.DesignDemo")]
     public class RegistrationActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
             SetContentView(Resource.Layout.RegistrationLayout);
-            var enter = FindViewById<Button>(Resource.Id.Reg);
+            var enter = FindViewById<Button>(Resource.Id.Continue);
             enter.Click += EnterClick;
         }
         void EnterClick(object sender, EventArgs e)
         {
+            ProgressDialog mProgressDialog = new ProgressDialog(this);
+            mProgressDialog.SetMessage("Загрузка");
+            mProgressDialog.SetProgressStyle(ProgressDialogStyle.Spinner);
+            mProgressDialog.Show();
             string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" + @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$";
-            string log = FindViewById<EditText>(Resource.Id.Login).Text;
-            string passw = FindViewById<EditText>(Resource.Id.Password).Text;
-            string email = FindViewById<EditText>(Resource.Id.Email).Text;
+            string log = FindViewById<EditText>(Resource.Id.txtLogin).Text;
+            string passw = FindViewById<EditText>(Resource.Id.txtPassword).Text;
+            string email = FindViewById<EditText>(Resource.Id.txtemail).Text;
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             AlertDialog error_dialog = builder.Create();
             if (log.Length <= 4)
@@ -35,18 +39,21 @@ namespace AndroidContent.Views
                 error_dialog.SetTitle("Слишком короткий логин");
                 error_dialog.SetMessage("В поле для логина должно быть более четырех символов");
                 error_dialog.Show();
+                mProgressDialog.Hide();
             }
             else if (log.Length <= 4)
             {
                 error_dialog.SetTitle("Слишком короткий пароль");
                 error_dialog.SetMessage("В поле для пароля должно быть более четырех символов");
                 error_dialog.Show();
+                mProgressDialog.Hide();
             }
             else if (!Regex.IsMatch(email, pattern, RegexOptions.IgnoreCase))
             {
                 error_dialog.SetTitle("Некорректный E-mail");
                 error_dialog.SetMessage("Пример: hahaha@lol.kek");
                 error_dialog.Show();
+                mProgressDialog.Hide();
             }
             else
             {
@@ -55,6 +62,7 @@ namespace AndroidContent.Views
                     error_dialog.SetTitle("Логин занят");
                     error_dialog.SetMessage("Пользователь с таким логином уже зарегистрирован");
                     error_dialog.Show();
+                    mProgressDialog.Hide();
                 }
                 else
                 {

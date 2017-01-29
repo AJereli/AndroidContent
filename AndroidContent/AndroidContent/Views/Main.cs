@@ -17,8 +17,8 @@ using Android.Support.V4.Widget;
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon")]
-    public class MainActivity : Activity /*, SwipeRefreshLayout.IOnRefreshListener */
+    [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
+    public class MainActivity : AppCompatActivity
     {
         private List<ContentUnit> list_cu;
 
@@ -64,6 +64,9 @@ namespace AndroidContent.Views
             mRecyclerView.AddOnScrollListener(scrollListener);
             mRecyclerView.SetAdapter(mAdapter);
 
+            var mUsername = FindViewById<TextView>(Resource.Id.username);
+           
+            //mUsername.Text = username;
         }
 
         private void Favorits_ReloadAllhEvent(Favorit obj)
@@ -75,13 +78,13 @@ namespace AndroidContent.Views
         }
 
         private void NewContentEvent(Favorit fav)
-        {
+            {
             if (fav.content.Count == 0)
                 return;
             list_cu.AddRange(fav.content);
             isLoading = false;
            // Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-        }
+            }
 
         async private void Refresher_Refresh(object sender, EventArgs e)
         {
@@ -90,9 +93,11 @@ namespace AndroidContent.Views
             refresher.Refreshing = false;
 
         }
+        public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
+        {
+            Finish();
+            return base.OnKeyDown(keyCode, e);
+        }
        
     }
-
-
-
 }
