@@ -5,7 +5,7 @@ namespace AllContent_Client
 {
     public class User
     {
-        static public string Name { get; private set; }
+        static public string Name { get; set; }
         private static User main_user;
         public List<string> favoritSources { get; set; }
         private User()

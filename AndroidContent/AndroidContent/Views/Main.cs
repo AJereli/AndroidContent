@@ -14,6 +14,7 @@ using Android.Support.V7.App;
 using AllContent_Client;
 using Android.Util;
 using Android.Support.V4.Widget;
+using Android.Preferences;
 
 namespace AndroidContent.Views
 {
@@ -21,7 +22,7 @@ namespace AndroidContent.Views
     public class MainActivity : AppCompatActivity
     {
         private List<ContentUnit> list_cu;
-
+        private DrawerLayout mDrawerLayout;
         bool isLoading = false;
         private RecyclerView mRecyclerView;
         private ItemAdapter mAdapter;
@@ -30,11 +31,28 @@ namespace AndroidContent.Views
         SwipeRefreshLayout refresher;
         protected override void OnCreate(Bundle bundle)
         {
+            
             base.OnCreate(bundle);
 
             // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.MainLayout);
             list_cu = new List<ContentUnit>();
+
+            Android.Support.V7.Widget.Toolbar toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolBar);
+            SetSupportActionBar(toolBar);
+
+            Android.Support.V7.App.ActionBar ab = SupportActionBar;
+            ab.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
+            ab.SetDisplayHomeAsUpEnabled(true);
+
+            mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+
+            Android.Support.Design.Widget.NavigationView navigationView = FindViewById<Android.Support.Design.Widget.NavigationView>(Resource.Id.nav_view);
+            navigationView.NavigationItemSelected += NavigationView_NavigationItemSelected;
+            if (navigationView != null)
+            {
+                SetUpDrawerContent(navigationView);
+            }       
 
             refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
             mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
@@ -65,8 +83,44 @@ namespace AndroidContent.Views
             mRecyclerView.SetAdapter(mAdapter);
 
             var mUsername = FindViewById<TextView>(Resource.Id.username);
-           
-            //mUsername.Text = username;
+        }
+
+        public override bool OnOptionsItemSelected(IMenuItem item)
+        {
+            switch (item.ItemId)
+            {
+                case Android.Resource.Id.Home:
+                    mDrawerLayout.OpenDrawer((int)GravityFlags.Left);
+                    return true;
+
+                default:
+                    return base.OnOptionsItemSelected(item);
+            }
+        }
+
+        void NavigationView_NavigationItemSelected(object sender, Android.Support.Design.Widget.NavigationView.NavigationItemSelectedEventArgs e)
+        {
+            ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this); ;
+            ISharedPreferencesEditor editor = prefs.Edit();
+            switch (e.MenuItem.ItemId)
+            {
+                case (Resource.Id.exit):
+                    editor.PutBoolean("check", false);
+                    editor.Apply();
+                    Intent authoriz = new Intent(this, typeof(AuthorizationActivity));                    
+                    StartActivity(authoriz);
+                    Finish();
+                    break;
+            }
+        }
+
+        private void SetUpDrawerContent(Android.Support.Design.Widget.NavigationView navigationView)
+        {
+            navigationView.NavigationItemSelected += (object sender, Android.Support.Design.Widget.NavigationView.NavigationItemSelectedEventArgs e) =>
+            {
+                e.MenuItem.SetChecked(true);
+                mDrawerLayout.CloseDrawers();
+            };
         }
 
         private void Favorits_ReloadAllhEvent(Favorit obj)

@@ -26,6 +26,7 @@
           
           android:title="Настройки" />
       <item
+          android:id="@+id/exit"
           
           android:title="Выйти" />
     </menu>

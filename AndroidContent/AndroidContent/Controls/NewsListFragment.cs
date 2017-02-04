@@ -70,10 +70,10 @@ namespace AndroidContent
 
             if (cu.imgUrl == null || cu.imgUrl.Length == 0)
             {
-                convertView = activity.LayoutInflater.Inflate(Resource.Layout.item_without_img, null);
-                r_id_header = Resource.Id.content_HeaderTextViewWI;
-                r_id_description = Resource.Id.content_DescriptionTextViewWI;
-                r_id_date = Resource.Id.content_DateTextViewWI;
+                //convertView = activity.LayoutInflater.Inflate(Resource.Layout.item_without_img, null);
+                //r_id_header = Resource.Id.content_HeaderTextViewWI;
+                //r_id_description = Resource.Id.content_DescriptionTextViewWI;
+                //r_id_date = Resource.Id.content_DateTextViewWI;
             }
             else {
                 convertView = activity.LayoutInflater.Inflate(Resource.Layout.item, null);

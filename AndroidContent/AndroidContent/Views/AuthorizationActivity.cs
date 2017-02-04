@@ -5,10 +5,12 @@ using System.Text;
 
 using Android.App;
 using Android.Content;
+using Android.Preferences;
 using Android.OS;
 using Android.Runtime;
 using Android.Views;
 using Android.Widget;
+using Android.Accounts;
 using AllContent_Client;
 
 namespace AndroidContent.Views
@@ -16,9 +18,21 @@ namespace AndroidContent.Views
     [Activity(Label = "AndroidContent", MainLauncher = true, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
     public class AuthorizationActivity : Activity
     {
+        ISharedPreferences prefs;
+        ISharedPreferencesEditor editor;
+        Intent main;
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
+            prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+            bool k = prefs.GetBoolean("check", false);
+            if (k)
+            {
+                main = new Intent(this, typeof(MainActivity));
+                User.Name = prefs.GetString("username", "");
+                StartActivity(main);
+                Finish();
+            }
             SetContentView(Resource.Layout.Authorizationlayout);
             var enter = FindViewById<Button>(Resource.Id.Enter);
             enter.Click += EnterClick;
@@ -35,7 +49,7 @@ namespace AndroidContent.Views
         void EnterClick(object sender, EventArgs e)
         {
             ProgressDialog mProgressDialog = new ProgressDialog(this);
-            mProgressDialog.SetMessage("Загрузка");
+            mProgressDialog.SetMessage("Загрузка...");
             mProgressDialog.SetProgressStyle(ProgressDialogStyle.Spinner);
             mProgressDialog.Show();
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
@@ -46,8 +60,12 @@ namespace AndroidContent.Views
             {
                 if (User.MainUser.Authorization(log, passw))
                 {
-                    
-                    var main = new Intent(this, typeof(MainActivity));
+                    prefs = PreferenceManager.GetDefaultSharedPreferences(this);
+                    editor = prefs.Edit();
+                    editor.PutString("username", log);
+                    editor.PutBoolean("check", true);
+                    editor.Apply();
+                    main = new Intent(this, typeof(MainActivity));                    
                     StartActivity(main);
                     Finish();
                 }
