@@ -25,6 +25,10 @@ namespace AndroidContent.Views
 
             var reg = FindViewById<TextView>(Resource.Id.TVRegistration);
             reg.Click += RegClick;
+            #region test
+            FindViewById<EditText>(Resource.Id.txtLogin).Text = "test";
+            FindViewById<EditText>(Resource.Id.txtPassword).Text = "test";
+            #endregion
         }
         void RegClick(object sender, EventArgs e)
         {

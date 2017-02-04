@@ -3,30 +3,24 @@
 
   <group android:checkableBehavior="single">
     <item
-        android:id="@+id/nav_home"
-        
-        android:title="Хз для чего" />
+          android:id="@+id/news"
+          android:title="Новости" />
     <item
-        android:id="@+id/nav_messages"
-        
-        android:title="Хз для чего" />
+        android:id="@+id/content_sources"
+        android:title="Список источников" />
     <item
-        android:id="@+id/nav_friends"
-        
-        android:title="Хз для чего" />
-    <item
-        android:id="@+id/nav_discussion"
-        
-        android:title="Хз для чего" />
+            android:id="@+id/settings"
+            android:title="Настройки" />
   </group>
 
   <item android:title="Sub items">
     <menu>
+
       <item
-          
-          android:title="Настройки" />
+        android:id="@+id/info"
+        android:title="Информация" />
       <item
-          
+          android:id="@+id/logout"
           android:title="Выйти" />
     </menu>
   </item>

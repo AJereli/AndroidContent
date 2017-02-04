@@ -5,9 +5,9 @@ namespace AllContent_Client
 {
     public class User
     {
-        static public string Name { get; private set; }
         private static User main_user;
         public List<string> favoritSources { get; set; }
+        public string Name { get; private set; }
         private User()
         {
             favoritSources = new List<string>();
@@ -21,7 +21,7 @@ namespace AllContent_Client
                 return main_user;
             }
         }
-        public void UpdateFavor()
+        public void UpdateFavorits()
         {
             using (DBClient client = new DBClient())
             {
@@ -30,7 +30,7 @@ namespace AllContent_Client
                     myStringIsBigIsVeryVeryBig += favoritSources[i] + ";";
                 MySqlParameters mysql_params = new MySqlParameters();
                 mysql_params.AddParameter("favor", myStringIsBigIsVeryVeryBig);
-                mysql_params.AddParameter("login", User.Name);
+                mysql_params.AddParameter("login", User.MainUser.Name);
 
                 client.Query("UPDATE users SET favorites_source = @favor WHERE login=@login", mysql_params);
             }
@@ -39,6 +39,7 @@ namespace AllContent_Client
 
         public void LoadFavoritSources()
         {
+            favoritSources = new List<string>();
             using (DBClient client = new DBClient())
             {
 
@@ -68,7 +69,7 @@ namespace AllContent_Client
 
                 if (MD5Hashing.CompareHashes(password, hashed_pass[0]))
                 {
-                    Name = login.ToLower();
+                    Name = login;
                     return true;
                 }
                 else return false;

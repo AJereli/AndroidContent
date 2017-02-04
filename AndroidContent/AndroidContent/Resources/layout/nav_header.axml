@@ -17,5 +17,5 @@
         android:textAppearance="@style/TextAppearance.AppCompat.Body1"
         android:textColor="#000"
         android:layout_gravity="bottom|center"
-        android:id="@+id/username"/>
+        android:id="@+id/userName" />
 </FrameLayout>

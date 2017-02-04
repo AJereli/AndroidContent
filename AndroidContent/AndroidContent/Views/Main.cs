@@ -14,90 +14,92 @@ using Android.Support.V7.App;
 using AllContent_Client;
 using Android.Util;
 using Android.Support.V4.Widget;
+using Android.Support.Design.Widget;
+
+using SupportFragment = Android.Support.V4.App.Fragment;
+
 
 namespace AndroidContent.Views
 {
     [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
-    public class MainActivity : AppCompatActivity
+    public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-        private List<ContentUnit> list_cu;
 
-        bool isLoading = false;
-        private RecyclerView mRecyclerView;
-        private ItemAdapter mAdapter;
-        private LinearLayoutManager mLayoutManager;
-        private ItemScrollListener scrollListener;
-        SwipeRefreshLayout refresher;
+        private NewsListFragment newsListFragment = new NewsListFragment();
+
+        private NavigationView navigationView;
+        private DrawerLayout mDrawerLayout;
         protected override void OnCreate(Bundle bundle)
         {
+            #region initialisation
             base.OnCreate(bundle);
-
-            // Set our view from the "main" layout resource
             SetContentView(Resource.Layout.MainLayout);
-            list_cu = new List<ContentUnit>();
 
-            refresher = FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
-            mRecyclerView = FindViewById<RecyclerView>(Resource.Id.recyclerView);
+            mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+            View navHeader = navigationView.GetHeaderView(0);
+            navHeader.FindViewById<TextView>(Resource.Id.userName).Text = User.MainUser.Name;
+            #endregion
+            navigationView.SetNavigationItemSelectedListener(this);
 
-            refresher.Refresh += Refresher_Refresh;        
+            SupportFragmentManager.BeginTransaction().AddToBackStack("news").Add(Resource.Id.fragmentZone, newsListFragment).Commit();
 
-            mLayoutManager = new LinearLayoutManager(this);
-            scrollListener = new ItemScrollListener(mLayoutManager);
 
-            scrollListener.LoadMoreEvent += (s, e) =>
-            {
-                if (!isLoading)
-                {
-                    isLoading = true;
-                    FavoritList.Favorits.LoadNextNews(mAdapter);
-                }
-            };
-
-            FavoritList.Favorits.ReloadAllhEvent += Favorits_ReloadAllhEvent; ;
-            FavoritList.Favorits.AddEvent += NewContentEvent;
-
-            User.MainUser.LoadFavoritSources();
-
-            mAdapter = new ItemAdapter(list_cu, this);
-
-            mRecyclerView.SetLayoutManager(mLayoutManager);
-            mRecyclerView.AddOnScrollListener(scrollListener);
-            mRecyclerView.SetAdapter(mAdapter);
-
-            var mUsername = FindViewById<TextView>(Resource.Id.username);
-           
-            //mUsername.Text = username;
         }
 
-        private void Favorits_ReloadAllhEvent(Favorit obj)
+        public override bool OnCreateOptionsMenu(IMenu menu)
         {
-            if (obj.content.Count == 0)
-                return;
-            list_cu.RemoveAll(i => i.source == obj.Source);
-            list_cu.AddRange(obj.content);
+            MenuInflater inflater = MenuInflater;
+            inflater.Inflate(Resource.Menu.drawer_view, menu);
+            return true;
         }
+        public bool OnNavigationItemSelected(IMenuItem menuItem)
+        {
+            menuItem.SetCheckable(false);
 
-        private void NewContentEvent(Favorit fav)
+            switch (menuItem.ItemId)
             {
-            if (fav.content.Count == 0)
-                return;
-            list_cu.AddRange(fav.content);
-            isLoading = false;
-           // Log.Info("List_cu cnt: ", list_cu.Count.ToString());
+                case Resource.Id.news:
+
+                    SupportFragmentManager.BeginTransaction().AddToBackStack("sources")
+                   .Replace(Resource.Id.fragmentZone, new NewsListFragment()).Commit();
+
+                    break;
+                case Resource.Id.content_sources:
+
+                   
+                        SupportFragmentManager.BeginTransaction().AddToBackStack("sources")
+                   .Replace(Resource.Id.fragmentZone, new SourcesFragment()).Commit();
+                    
+
+                    break;
+                case Resource.Id.settings:
+                    SupportFragmentManager.BeginTransaction().AddToBackStack("settings")
+                      .Replace(Resource.Id.fragmentZone, new SettingsFragment()).Commit();
+                    break;
+                case Resource.Id.info:
+
+                    break;
+                case Resource.Id.logout:
+
+                    break;
+                default: break;
             }
-
-        async private void Refresher_Refresh(object sender, EventArgs e)
-        {
-            await FavoritList.Favorits.ReloadAll(mAdapter);
-            mAdapter.NotifyDataSetChanged();
-            refresher.Refreshing = false;
-
+            menuItem.SetChecked(false);
+            mDrawerLayout.CloseDrawer(navigationView);
+            return true;
         }
-        public override bool OnKeyDown(Keycode keyCode, KeyEvent e)
+
+        public override void OnBackPressed()
         {
-            Finish();
-            return base.OnKeyDown(keyCode, e);
+            if (mDrawerLayout.IsDrawerOpen(navigationView))
+            {
+                mDrawerLayout.CloseDrawer(navigationView);
+                return;
+            }
+            SupportFragmentManager.PopBackStack();
+            base.OnBackPressed();
         }
-       
+
     }
 }

@@ -1,105 +1,117 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using AllContent_Client;
+using System.Text;
+using Android.Views;
+using Android.Widget;
 using Android.App;
 using Android.Content;
 using Android.OS;
 using Android.Runtime;
-using Android.Views;
-using Android.Widget;
 using Android.Support.V4.App;
-using Square.Picasso;
+using Android.Support.V7.Widget;
+using Android.Support.V7.App;
+using AllContent_Client;
 using Android.Util;
+using Android.Support.V4.Widget;
+using Android.Support.Design.Widget;
+
+using SupportFragment = Android.Support.V4.App.Fragment;
 
 namespace AndroidContent
 {
-    public class NewsListFragment : Android.Support.V4.App.ListFragment
+    class NewsListFragment : SupportFragment
     {
 
-        private  List<ContentUnit> list_cu; // Вот так инкапсуляция идет нахуй
-      
-        Tests.ContentLoadTest CLT;
+        private List<ContentUnit> list_cu;
+
+        private bool isLoading = false;
+        private bool IsRecyclerViewInited = false;
+
+        private RecyclerView mRecyclerView;
+        private ItemAdapter mAdapter;
+        private LinearLayoutManager mLayoutManager;
+        private ItemScrollListener scrollListener;
+
+
+        private SwipeRefreshLayout refresher;
+
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
-
             list_cu = new List<ContentUnit>();
-          
-            //FavoritList.Favorits.AddEvent += () =>
-            //{
-            //    foreach (var fav in FavoritList.Favorits)
-            //    {
-            //        list_cu.AddRange(fav.content);
-            //        Log.Info("List_cu cnt: ", list_cu.Count.ToString());
-            //    }
+            mLayoutManager = new LinearLayoutManager(Activity);
+            scrollListener = new ItemScrollListener(mLayoutManager);
+            mAdapter = new ItemAdapter(list_cu, Activity);
 
-            //};
-            CLT = new Tests.ContentLoadTest();
-            
-            ContentUnitAdapter adapter = new ContentUnitAdapter(Activity, list_cu);
-            ListAdapter = adapter;
+            FavoritList.Favorits.ReloadAllhEvent += Favorits_ReloadAllhEvent; ;
+            FavoritList.Favorits.AddEvent += NewContentEvent;
+            scrollListener.LoadMoreEvent += (s, e) =>
+            {
+                if (!isLoading)
+                {
+                    isLoading = true;
+                    FavoritList.Favorits.LoadNextNews(mAdapter);
+                }
+            };
+
+
         }
-        
-        public override void OnListItemClick(ListView l, View v, int position, long id)
+        public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
-            ContentUnit cu = ((ContentUnitAdapter)ListAdapter).GetItem(position);
-            Intent intent = new Intent(Activity, Java.Lang.Class.FromType(typeof(WebActivity)));
-            intent.SetData(Android.Net.Uri.Parse(cu.URL));
-            StartActivity(intent);
+            View v = inflater.Inflate(Resource.Layout.NewsListLayout, container, false);
+
+            refresher = v.FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
+            mRecyclerView = v.FindViewById<RecyclerView>(Resource.Id.recyclerView);
+
+
+
+
+            if (!IsRecyclerViewInited)
+            {
+                mRecyclerView.SetLayoutManager(mLayoutManager);
+                mRecyclerView.AddOnScrollListener(scrollListener);
+                mRecyclerView.SetAdapter(mAdapter);
+                IsRecyclerViewInited = true;
+            }
+            return v;
+
         }
-        
+        public override void OnStart()
+        {
+            User.MainUser.LoadFavoritSources();
+            base.OnStart();
+        }
+
+        private void Favorits_ReloadAllhEvent(Favorit obj)
+        {
+            if (obj.content.Count == 0)
+                return;
+            list_cu.RemoveAll(i => i.source == obj.Source);
+            list_cu.AddRange(obj.content);
+
+        }
+
+        private void NewContentEvent(Favorit fav)
+        {
+            if (fav.content.Count == 0)
+                return;
+            list_cu.AddRange(fav.content);
+            isLoading = false;
+        }
+
+        async private void Refresher_Refresh(object sender, EventArgs e)
+        {
+            await FavoritList.Favorits.ReloadAll(mAdapter);
+            mAdapter.NotifyDataSetChanged();
+            refresher.Refreshing = false;
+
+        }
     }
 
- 
-    class ContentUnitAdapter : ArrayAdapter<ContentUnit>
+    public interface IOnBackPressedListener
     {
-        Activity activity;
-        public ContentUnitAdapter(Activity _activity, List<ContentUnit> content_list) : base(_activity, 0, content_list)
-        {
-            activity = _activity;
-            
-        }
-      
-        public override View GetView(int position, View convertView, ViewGroup parent)
-        {
-            
-            ContentUnit cu = GetItem(position);
-            int r_id_header = 0, r_id_description = 0, r_id_date = 0;
-            convertView = activity.LayoutInflater.Inflate(Resource.Layout.item, null);
+        bool OnBackPressed();
 
-            if (cu.imgUrl == null || cu.imgUrl.Length == 0)
-            {
-                convertView = activity.LayoutInflater.Inflate(Resource.Layout.item_without_img, null);
-                r_id_header = Resource.Id.content_HeaderTextViewWI;
-                r_id_description = Resource.Id.content_DescriptionTextViewWI;
-                r_id_date = Resource.Id.content_DateTextViewWI;
-            }
-            else {
-                convertView = activity.LayoutInflater.Inflate(Resource.Layout.item, null);
-                r_id_header = Resource.Id.content_HeaderTextView;
-                r_id_description = Resource.Id.content_DescriptionTextView;
-                r_id_date = Resource.Id.content_DateTextView;
-                ImageView iv = convertView.FindViewById<ImageView>(Resource.Id.content_imgImageView);
-                Picasso.With(activity).Load(cu.imgUrl).Into(iv);
-            }
-
-
-            TextView header = convertView.FindViewById<TextView>(r_id_header);
-            TextView description = convertView.FindViewById<TextView>(r_id_description);
-            TextView date = convertView.FindViewById<TextView>(r_id_date);
-
-            header.Text = cu.header;
-            description.Text = cu.description;
-            date.Text = cu.date;
-
-            if (position == Count - 1)
-            {
-                //FavoritList.Favorits.LoadNextNews();
-                Log.Info("COUNT INFO", "Pos: " + position + " CNT: " + Count);
-            }
-
-            return convertView;
-        }
     }
 }
