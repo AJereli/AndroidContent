@@ -63,10 +63,7 @@ namespace AndroidContent
 
             refresher = v.FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
             mRecyclerView = v.FindViewById<RecyclerView>(Resource.Id.recyclerView);
-
-
-
-
+            
             if (!IsRecyclerViewInited)
             {
                 mRecyclerView.SetLayoutManager(mLayoutManager);
@@ -109,9 +106,5 @@ namespace AndroidContent
         }
     }
 
-    public interface IOnBackPressedListener
-    {
-        bool OnBackPressed();
-
-    }
+    
 }

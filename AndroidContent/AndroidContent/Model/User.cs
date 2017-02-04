@@ -5,9 +5,9 @@ namespace AllContent_Client
 {
     public class User
     {
+        static public string Name { get; set; }
         private static User main_user;
         public List<string> favoritSources { get; set; }
-        public string Name { get; private set; }
         private User()
         {
             favoritSources = new List<string>();
@@ -30,7 +30,7 @@ namespace AllContent_Client
                     myStringIsBigIsVeryVeryBig += favoritSources[i] + ";";
                 MySqlParameters mysql_params = new MySqlParameters();
                 mysql_params.AddParameter("favor", myStringIsBigIsVeryVeryBig);
-                mysql_params.AddParameter("login", User.MainUser.Name);
+                mysql_params.AddParameter("login", User.Name);
 
                 client.Query("UPDATE users SET favorites_source = @favor WHERE login=@login", mysql_params);
             }

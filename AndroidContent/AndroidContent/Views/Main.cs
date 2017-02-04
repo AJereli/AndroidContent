@@ -17,15 +17,13 @@ using Android.Support.V4.Widget;
 using Android.Support.Design.Widget;
 
 using SupportFragment = Android.Support.V4.App.Fragment;
-
+using Android.Preferences;
 
 namespace AndroidContent.Views
 {
     [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-
-        private NewsListFragment newsListFragment = new NewsListFragment();
 
         private NavigationView navigationView;
         private DrawerLayout mDrawerLayout;
@@ -34,15 +32,29 @@ namespace AndroidContent.Views
             #region initialisation
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.MainLayout);
+            SupportFragmentManager.BeginTransaction().AddToBackStack("news").Add(Resource.Id.fragmentZone, new NewsListFragment()).Commit();
+
+            Android.Support.V7.Widget.Toolbar toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolBar);
+            SetSupportActionBar(toolBar);
+
+            Android.Support.V7.App.ActionBar ab = SupportActionBar;
+            ab.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
+            ab.SetDisplayHomeAsUpEnabled(true);
+
+            mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
+
+            navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
+
+           
+
 
             mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             View navHeader = navigationView.GetHeaderView(0);
-            navHeader.FindViewById<TextView>(Resource.Id.userName).Text = User.MainUser.Name;
+            navHeader.FindViewById<TextView>(Resource.Id.userName).Text = User.Name;
             #endregion
             navigationView.SetNavigationItemSelectedListener(this);
 
-            SupportFragmentManager.BeginTransaction().AddToBackStack("news").Add(Resource.Id.fragmentZone, newsListFragment).Commit();
 
 
         }
@@ -61,16 +73,16 @@ namespace AndroidContent.Views
             {
                 case Resource.Id.news:
 
-                    SupportFragmentManager.BeginTransaction().AddToBackStack("sources")
+                    SupportFragmentManager.BeginTransaction().AddToBackStack("news")
                    .Replace(Resource.Id.fragmentZone, new NewsListFragment()).Commit();
 
                     break;
                 case Resource.Id.content_sources:
 
-                   
-                        SupportFragmentManager.BeginTransaction().AddToBackStack("sources")
-                   .Replace(Resource.Id.fragmentZone, new SourcesFragment()).Commit();
-                    
+
+                    SupportFragmentManager.BeginTransaction().AddToBackStack("sources")
+               .Replace(Resource.Id.fragmentZone, new SourcesFragment()).Commit();
+
 
                     break;
                 case Resource.Id.settings:
@@ -80,15 +92,33 @@ namespace AndroidContent.Views
                 case Resource.Id.info:
 
                     break;
-                case Resource.Id.logout:
-
+                case Resource.Id.exit:
+                    ISharedPreferences prefs = PreferenceManager.GetDefaultSharedPreferences(this); ;
+                    ISharedPreferencesEditor editor = prefs.Edit();
+                    editor.PutBoolean("check", false);
+                    editor.Apply();
+                    Intent authoriz = new Intent(this, typeof(AuthorizationActivity));
+                    StartActivity(authoriz);
+                    Finish();
                     break;
-                default: break;
+                default:
+                    return base.OnOptionsItemSelected(menuItem);
             }
-            menuItem.SetChecked(false);
             mDrawerLayout.CloseDrawer(navigationView);
+
             return true;
         }
+
+
+
+        //private void SetUpDrawerContent(NavigationView navigationView)
+        //{
+        //    navigationView.NavigationItemSelected += (object sender, NavigationView.NavigationItemSelectedEventArgs e) =>
+        //    {
+        //        e.MenuItem.SetChecked(true);
+        //        mDrawerLayout.CloseDrawers();
+        //    };
+        //}
 
         public override void OnBackPressed()
         {

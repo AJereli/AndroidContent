@@ -20,7 +20,8 @@
         android:id="@+id/info"
         android:title="Информация" />
       <item
-          android:id="@+id/logout"
+          android:id="@+id/exit"
+          
           android:title="Выйти" />
     </menu>
   </item>

@@ -8,11 +8,7 @@
   
   <include
       layout="@layout/include_list_viewpager" />
-  <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:id="@+id/fragmentZone"
-             />
+
   <android.support.design.widget.NavigationView
       android:id="@+id/nav_view"
       android:layout_height="match_parent"
