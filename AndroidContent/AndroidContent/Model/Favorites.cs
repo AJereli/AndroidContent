@@ -119,22 +119,32 @@ namespace AllContent_Client
     }
 
 
-    class FavoritList : IEnumerable<Favorit>
+    class FavoritList
     {
         public event Action<Favorit> AddEvent;
         public event Action<Favorit> ReloadAllhEvent;
         public event Action DeleteEvent = delegate { };
         public uint DownloadLimit { get; set; }
 
-
+        public List<string> ALL_SOURCE { get; }
         private List<Favorit> favorites;
         static private FavoritList favorlist;
 
         private FavoritList()
         {
-            DownloadLimit = 10;
             favorites = new List<Favorit>();
-         
+            ALL_SOURCE = new List<string>();
+            using (DBClient client = new DBClient())
+            {
+
+                string[] sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", "$sources"))[0].Split(';');
+                if (sources != null && sources.Length != 0)
+                    foreach (var str in sources)
+                        if (str != "")
+                            ALL_SOURCE.Add(str);
+            }
+            DownloadLimit = 10;
+
         }
 
         static public FavoritList Favorits
@@ -147,7 +157,7 @@ namespace AllContent_Client
             }
         }
 
-        
+
 
         public Task ReloadAll(AndroidContent.ItemAdapter adapter)
         {
@@ -158,22 +168,25 @@ namespace AllContent_Client
                     favor.DeleteContent();
                     favor.LoadAll();
                     ReloadAllhEvent(favor);
-                   // adapter.NotifyDataSetChanged();
+                    // adapter.NotifyDataSetChanged();
                 }
             });
 
         }
 
-        public void LoadNextNews(AndroidContent.ItemAdapter adapter)
+        public Task LoadNextNews(AndroidContent.ItemAdapter adapter)
         {
-            foreach (var favor in favorites)
+            return Task.Run(() =>
             {
-                if (favor.LoadNextNews(DownloadLimit))
+                foreach (var favor in favorites)
                 {
-                    AddEvent(favor);
-                    adapter.NotifyDataSetChanged();
+                    if (favor.LoadNextNews(DownloadLimit))
+                    {
+                        AddEvent(favor);
+                        adapter.NotifyDataSetChanged();
+                    }
                 }
-            }
+            });
         }
 
 
@@ -198,14 +211,6 @@ namespace AllContent_Client
             DeleteEvent();
         }
 
-        public IEnumerator<Favorit> GetEnumerator()
-        {
-            return favorites.GetEnumerator();
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return favorites.GetEnumerator();
-        }
+      
     }
 }

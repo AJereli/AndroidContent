@@ -63,7 +63,7 @@ namespace AndroidContent
 
             refresher = v.FindViewById<SwipeRefreshLayout>(Resource.Id.refresher);
             mRecyclerView = v.FindViewById<RecyclerView>(Resource.Id.recyclerView);
-            
+            refresher.Refresh += Refresher_Refresh;
             if (!IsRecyclerViewInited)
             {
                 mRecyclerView.SetLayoutManager(mLayoutManager);
@@ -71,14 +71,13 @@ namespace AndroidContent
                 mRecyclerView.SetAdapter(mAdapter);
                 IsRecyclerViewInited = true;
             }
+            User.MainUser.LoadFavoritSources();
+
             return v;
 
         }
-        public override void OnStart()
-        {
-            User.MainUser.LoadFavoritSources();
-            base.OnStart();
-        }
+
+       
 
         private void Favorits_ReloadAllhEvent(Favorit obj)
         {
@@ -92,7 +91,10 @@ namespace AndroidContent
         private void NewContentEvent(Favorit fav)
         {
             if (fav.content.Count == 0)
+            {
+                isLoading = false;
                 return;
+            }
             list_cu.AddRange(fav.content);
             isLoading = false;
         }
@@ -104,6 +106,7 @@ namespace AndroidContent
             refresher.Refreshing = false;
 
         }
+
     }
 
     

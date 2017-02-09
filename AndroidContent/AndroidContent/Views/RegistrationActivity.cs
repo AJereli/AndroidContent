@@ -15,6 +15,7 @@ namespace AndroidContent.Views
     [Activity(Label = "RegistrationActivity", Theme = "@style/Theme.DesignDemo")]
     public class RegistrationActivity : Activity
     {
+        const string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" + @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$";
         protected override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
@@ -28,10 +29,11 @@ namespace AndroidContent.Views
             mProgressDialog.SetMessage("Загрузка");
             mProgressDialog.SetProgressStyle(ProgressDialogStyle.Spinner);
             mProgressDialog.Show();
-            string pattern = @"^(?("")(""[^""]+?""@)|(([0-9a-z]((\.(?!\.))|[-!#\$%&'\*\+/=\?\^`\{\}\|~\w])*)(?<=[0-9a-z])@))" + @"(?(\[)(\[(\d{1,3}\.){3}\d{1,3}\])|(([0-9a-z][-\w]*[0-9a-z]*\.)+[a-z0-9]{2,17}))$";
+
             string log = FindViewById<EditText>(Resource.Id.txtLogin).Text;
             string passw = FindViewById<EditText>(Resource.Id.txtPassword).Text;
             string email = FindViewById<EditText>(Resource.Id.txtemail).Text;
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             AlertDialog error_dialog = builder.Create();
             if (log.Length <= 4)

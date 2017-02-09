@@ -24,7 +24,7 @@ namespace AndroidContent.Views
     [Activity(Label = "Main Page TEST"/*, MainLauncher = true*/, Icon = "@drawable/icon", Theme = "@style/Theme.DesignDemo")]
     public class MainActivity : AppCompatActivity, NavigationView.IOnNavigationItemSelectedListener
     {
-
+        private NewsListFragment newsListFragment;
         private NavigationView navigationView;
         private DrawerLayout mDrawerLayout;
         protected override void OnCreate(Bundle bundle)
@@ -32,30 +32,29 @@ namespace AndroidContent.Views
             #region initialisation
             base.OnCreate(bundle);
             SetContentView(Resource.Layout.MainLayout);
-            SupportFragmentManager.BeginTransaction().AddToBackStack("news").Add(Resource.Id.fragmentZone, new NewsListFragment()).Commit();
 
-            Android.Support.V7.Widget.Toolbar toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolBar);
-            SetSupportActionBar(toolBar);
+           // Android.Support.V7.Widget.Toolbar toolBar = FindViewById<Android.Support.V7.Widget.Toolbar>(Resource.Id.toolBar);
+           // SetSupportActionBar(toolBar);
 
-            Android.Support.V7.App.ActionBar ab = SupportActionBar;
-            ab.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
-            ab.SetDisplayHomeAsUpEnabled(true);
+            //Android.Support.V7.App.ActionBar ab = SupportActionBar;
+            //ab.SetHomeAsUpIndicator(Resource.Drawable.ic_menu);
+            //ab.SetDisplayHomeAsUpEnabled(true);
 
             mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
 
             navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
 
            
-
-
             mDrawerLayout = FindViewById<DrawerLayout>(Resource.Id.drawer_layout);
             navigationView = FindViewById<NavigationView>(Resource.Id.nav_view);
             View navHeader = navigationView.GetHeaderView(0);
             navHeader.FindViewById<TextView>(Resource.Id.userName).Text = User.Name;
+            newsListFragment = new NewsListFragment();
             #endregion
             navigationView.SetNavigationItemSelectedListener(this);
 
 
+            SupportFragmentManager.BeginTransaction().Add(Resource.Id.fragmentZone, newsListFragment).Commit();
 
         }
 

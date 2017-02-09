@@ -11,7 +11,7 @@ namespace AllContent_Client
     class DBClient : IDisposable
     {
 
-
+        
         MySqlConnectionStringBuilder mysqlCSB;
         MySqlConnection mysqlConn;
         private object threadLock = new object();
@@ -35,7 +35,7 @@ namespace AllContent_Client
 
         }
 
-
+        
         /// <summary>
         /// Implement INSERT, UPDATE or DELETE query
         /// </summary>

@@ -43,9 +43,9 @@ namespace AllContent_Client
             using (DBClient client = new DBClient())
             {
 
-                List<string> sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", Name));
-                if (sources != null && sources.Count != 0)
-                    foreach (var str in sources[0].Split(';'))
+                string[] sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", Name))[0].Split(';');
+                if (sources != null && sources.Length != 0)
+                    foreach (var str in sources)
                     {
                         if (str != "")
                         {

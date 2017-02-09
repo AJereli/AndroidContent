@@ -25,13 +25,14 @@ namespace AndroidContent.Views
         {
             base.OnCreate(savedInstanceState);
             prefs = PreferenceManager.GetDefaultSharedPreferences(this);
-            bool k = prefs.GetBoolean("check", false);
-            if (k)
+            bool key = prefs.GetBoolean("check", false);
+            if (key)
             {
                 main = new Intent(this, typeof(MainActivity));
                 User.Name = prefs.GetString("username", "");
                 StartActivity(main);
                 Finish();
+                return;
             }
             SetContentView(Resource.Layout.Authorizationlayout);
             var enter = FindViewById<Button>(Resource.Id.Enter);
@@ -56,8 +57,10 @@ namespace AndroidContent.Views
             mProgressDialog.SetMessage("Загрузка...");
             mProgressDialog.SetProgressStyle(ProgressDialogStyle.Spinner);
             mProgressDialog.Show();
+
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             AlertDialog error_dialog = builder.Create();
+
             string log = FindViewById<EditText>(Resource.Id.txtLogin).Text;
             string passw = FindViewById<EditText>(Resource.Id.txtPassword).Text;
             try

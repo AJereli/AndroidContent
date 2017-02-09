@@ -17,55 +17,35 @@ namespace AndroidContent
 {
     public class SourcesFragment : Android.Support.V4.App.ListFragment
     {
-        private List<string> listOfAllFavorits;
-        private List<string> currentFavorits;
 
         public override void OnCreate(Bundle savedInstanceState)
         {
             base.OnCreate(savedInstanceState);
 
-            listOfAllFavorits = new List<string>();
-            currentFavorits = User.MainUser.favoritSources;
-            using (DBClient client = new DBClient())
-            {
-
-                List<string> sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", "$sources"));
-                if (sources != null && sources.Count != 0)
-                    foreach (var str in sources[0].Split(';'))
-                        if (str != "")
-                            listOfAllFavorits.Add(str);
-            }
-
         }
         public override void OnViewCreated(View view, Bundle savedInstanceState)
         {
-            ListView.Adapter = new SourceListAdapter(Activity, listOfAllFavorits);
+            ListView.Adapter = new SourceListAdapter(Activity);
         }
         public override View OnCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
         {
             View v = inflater.Inflate(Resource.Layout.FavoritsListLayout, container, false);
-            v.FindViewById<Button>(Resource.Id.RefreshFavoritsButton).Click += SourcesFragment_Click;
+
             return v;
         }
 
-        private void SourcesFragment_Click(object sender, EventArgs e)
-        {
-            User.MainUser.UpdateFavorits();
-        }
     }
 
 
     class SourceListAdapter : BaseAdapter<string>
     {
         private Activity context;
-        private List<string> allFavoritsList;
         private List<string> currentFavorits;
 
-        public SourceListAdapter(Activity _context, List<string> _allFavoritsList)
+        public SourceListAdapter(Activity _context)
         : base()
         {
             context = _context;
-            allFavoritsList = _allFavoritsList;
             currentFavorits = User.MainUser.favoritSources;
 
         }
@@ -84,11 +64,15 @@ namespace AndroidContent
 
             if (User.MainUser.favoritSources.Contains(item))
             {
+
                 cb.Checked = true;
-                currentFavorits.Add(item);
+                if (!currentFavorits.Contains(item))
+                    currentFavorits.Add(item);
+
             }
             else
                 cb.Checked = false;
+
             return view;
         }
 
@@ -97,7 +81,9 @@ namespace AndroidContent
             CheckBox cb = (CheckBox)sender;
             if (e.IsChecked)
             {
-                currentFavorits.Add(cb.Text);
+                if (!currentFavorits.Contains(cb.Text))
+                    currentFavorits.Add(cb.Text);
+                else return;
             }
             else
                 currentFavorits.Remove(cb.Text);
@@ -106,7 +92,7 @@ namespace AndroidContent
 
         public override int Count
         {
-            get { return allFavoritsList.Count; }
+            get { return FavoritList.Favorits.ALL_SOURCE.Count; }
         }
 
         public override long GetItemId(int position)
@@ -116,7 +102,7 @@ namespace AndroidContent
 
         public override string this[int index]
         {
-            get { return allFavoritsList[index]; }
+            get { return FavoritList.Favorits.ALL_SOURCE[index]; }
         }
 
     }

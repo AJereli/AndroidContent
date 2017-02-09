@@ -19,7 +19,7 @@ namespace AndroidContent
     {
         private Context context;
 
-        public string url;
+        public string url { get; set; }
         public ImageView Image { get; private set; }
         public TextView Header { get; private set; }
         public TextView Description { get; private set; }
@@ -27,7 +27,6 @@ namespace AndroidContent
 
         public ItemViewHolder(View itemView, Action<int> listener) : base(itemView)
         {
-            // Locate and cache view references:
             context = itemView.Context;
             Image = itemView.FindViewById<ImageView>(Resource.Id.content_imgImageView);
             Header = itemView.FindViewById<TextView>(Resource.Id.content_HeaderTextView);
