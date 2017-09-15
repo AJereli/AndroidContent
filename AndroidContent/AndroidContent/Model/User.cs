@@ -39,21 +39,26 @@ namespace AllContent_Client
 
         public void LoadFavoritSources()
         {
-            using (DBClient client = new DBClient())
-            {
+            //using (DBClient client = new DBClient())
+            //{
 
-                List<string> sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", Name));
-                if (sources != null && sources.Count != 0)
-                    foreach (var str in sources[0].Split(';'))
-                    {
-                        if (str != "")
-                        {
-                            favoritSources.Add(str);
-                            FavoritList.Favorits.Add(str);
-                        }
-                    }
+            //    List<string> sources = client.SelectQuery("SELECT favorites_source FROM users WHERE login = @login", new MySqlParameter("login", Name));
+            //    if (sources != null && sources.Count != 0)
+            //        foreach (var str in sources[0].Split(';'))
+            //        {
+            //            if (str != "")
+            //            {
+            //                favoritSources.Add(str);
+            //                FavoritList.Favorits.Add(str);
+            //            }
+            //        }
+            //}
+
+            for (int i = 0; i < 3; ++i)
+            {
+                favoritSources.Add("test source №" + i);
+                FavoritList.Favorits.Add("test source №" + i);
             }
-           
 
         }
 

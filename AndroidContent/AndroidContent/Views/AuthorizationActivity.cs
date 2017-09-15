@@ -13,7 +13,7 @@ using AllContent_Client;
 
 namespace AndroidContent.Views
 {
-    [Activity(Label = "AuthorizationActivity", MainLauncher = true)]
+    [Activity(Label = "AuthorizationActivity"/*, MainLauncher = true*/)]
     public class AuthorizationActivity : Activity
     {
         protected override void OnCreate(Bundle savedInstanceState)

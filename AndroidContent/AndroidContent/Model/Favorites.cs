@@ -12,7 +12,7 @@ namespace AllContent_Client
         public string Source { get; private set; }
         public List<ContentUnit> content;
         public uint SelectLimit { get; set; }
-        private uint CurrId;
+        private uint CurrId = 0;
         private uint currDownload = 0;
 
         private List<string> selectResult = null;
@@ -31,16 +31,26 @@ namespace AllContent_Client
         /// </summary>
         public void LoadAll()
         {
-            using (DBClient client = new DBClient())
-            {
-                CurrId = Convert.ToUInt32(client.SelectQuery("SELECT COUNT(header) FROM content " +
-                       $"WHERE source = @{sqlParamSource.ParameterName}", sqlParamSource)[0]);
+            //using (DBClient client = new DBClient())
+            //{
+            //    CurrId = Convert.ToUInt32(client.SelectQuery("SELECT COUNT(header) FROM content " +
+            //           $"WHERE source = @{sqlParamSource.ParameterName}", sqlParamSource)[0]);
 
-                selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
-                            "WHERE source=@sour" + " ORDER BY localID DESC LIMIT " + SelectLimit
-                            , sqlParamSource);
-                AddToCUList();
+            //    selectResult = client.SelectQuery("SELECT id, header, description, imgUrl, URL, tags, source, date FROM content " +
+            //                "WHERE source=@sour" + " ORDER BY localID DESC LIMIT " + SelectLimit
+            //                , sqlParamSource);
+            //    AddToCUList();
+            //}
+            selectResult = new List<string>();
+            for (int i = 0; i < 3; i++)
+            {
+                selectResult.AddRange(new string[] {CurrId.ToString(), "Header "+CurrId,
+                "Cool description for cool news " +CurrId +" \nSource: "+Source, @"http://www.animacity.ru/sites/default/files/blog/11903/WqqnAOPCaS8.jpg",
+                @"https://www.google.ru/", "test", Source, DateTime.Now.ToShortDateString()});
+                CurrId++;
             }
+            AddToCUList();
+
         }
         /// <summary>
         /// Download new news and returns true, if there is no new news - return false
